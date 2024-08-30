@@ -1,34 +1,30 @@
-name: Deploy to GitHub Pages
-
-on:
+name: Build and Deploy
+on: 
   push:
     branches: [ main ] # 触发条件：当 main 分支上有推送时
+permissions:
+  contents: write
 
 jobs:
-  deploy:
+  build-and-deploy:
+    concurrency: ci-${{ github.ref }} # Recommended if you intend to make multiple deployments in quick succession.
     runs-on: ubuntu-latest
-
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
+      - name: Checkout 🛎️
+        uses: actions/checkout@v4
 
-    - name: Setup Node.js environment
-      uses: actions/setup-node@v4
-      with:
-        node-version: '18.x' # 使用 Node.js 18 版本
-        cache: 'npm' # 使用 npm 缓存
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18.x' # 使用 Node.js 18 版本
+          cache: 'npm' # 使用 npm 缓存
+  
+      - name: Install and Build 🔧 # This example project is built using npm and outputs the result to the 'build' folder. Replace with the commands required to build your project, or remove this step entirely if your site is pre-built.
+        run: |
+          npm ci
+          npm run build
 
-    - name: Install dependencies
-      run: npm ci
-
-    - name: Build application
-      run: npm run build
-      env:
-        CI: true
-
-    - name: Deploy to GitHub Pages
-      uses: JamesIves/github-pages-deploy-action@v4
-      with:
-        branch: gh-pages # 分支名
-        folder: build # 要部署的文件夹
-        clean: true # 是否清理旧的文件
+      - name: Deploy 🚀
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: docs # The folder the action should deploy.
