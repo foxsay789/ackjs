@@ -1,8 +1,6 @@
-# fckjs
+# ackjs
 
 Quickly study JS.
-
-A static site base on [dumi](https://d.umijs.org).
 
 ## Development
 
